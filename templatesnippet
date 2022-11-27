@@ -1,0 +1,26 @@
+// Check for annotations and display a link if they exist
+$hypapi ='https://hypothes.is/api/search?uri=';
+$checkuri =  get_the_permalink();
+$checkthis = $hypapi.$checkuri;
+$seethis = 'https://hypothes.is/search?q=url:'.$checkuri;
+				$curl = curl_init();
+
+				curl_setopt_array($curl, array(
+			  	CURLOPT_URL => $checkthis,
+			  	CURLOPT_RETURNTRANSFER => true,
+			  	CURLOPT_ENCODING => '',
+				CURLOPT_MAXREDIRS => 10,
+				CURLOPT_TIMEOUT => 0,
+				CURLOPT_FOLLOWLOCATION => true,
+				CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+				CURLOPT_CUSTOMREQUEST => 'GET',
+				CURLOPT_HTTPHEADER => array(
+    'Authorization: Bearer YOUR_API_KEY'
+  ),
+));
+
+$response = curl_exec($curl);
+$response2 = json_decode($response, true);
+curl_close($curl);
+				// end of hypothesis check
+if ($response2["total"] > 0) echo '<h2 id="comments-title">'.$response2["total"].' annotations of "'.get_the_title().'"</h2><br/>This blogpost has '.$response2["total"].' annotations in Hypothes.is!  <a href="'.$seethis.'">See annotations</a><br/>';
